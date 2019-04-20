@@ -9,19 +9,13 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
-/**
- * Created by rajeevkumarsingh on 19/08/17.
- */
 @Component
 public class JwtTokenProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
 
-    @Value("${app.jwtSecret}")
-    private String jwtSecret;
-
-    @Value("${app.jwtExpirationInMs}")
-    private int jwtExpirationInMs;
+    private String jwtSecret = "JWTSuperSecretKey";
+    private int jwtExpirationInMs = 604800000;
 
     public String generateToken(Authentication authentication) {
 

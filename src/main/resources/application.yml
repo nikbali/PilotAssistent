@@ -8,8 +8,3 @@ spring:
 logging:
   level:
     org.springframework.web: INFO
-
-## App Properties
-app:
-  jwtSecret: JWTSuperSecretKey
-  jwtExpirationInMs: 604800000

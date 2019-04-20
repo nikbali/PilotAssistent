@@ -1,0 +1,21 @@
+version: '3.3'
+
+services:
+  springboot:
+    build: .
+    restart: always
+    container_name: pilot-assistent
+    ports:
+      - 8182:8080
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo
+    container_name: springboot-mongo
+    ports:
+          - 27018:27017
+    volumes:
+      - $HOME/data/springboot-mongo-data:/data/db
+      - $HOME/data/springboot-mongo-bkp:/data/bkp
+    restart: always
