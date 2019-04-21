@@ -3,7 +3,7 @@ server:
 spring:
   data:
     mongodb:
-      uri: mongodb://localhost:27017/blog
+      uri: ${MONGODB_URI}
       grid-fs-database: images
 logging:
   level:
