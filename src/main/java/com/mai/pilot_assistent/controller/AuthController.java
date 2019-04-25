@@ -1,10 +1,8 @@
 package com.mai.pilot_assistent.controller;
 
 
-import com.mai.pilot_assistent.controller.dto.ApiResponse;
-import com.mai.pilot_assistent.controller.dto.JwtAuthenticationResponse;
-import com.mai.pilot_assistent.controller.dto.LoginRequest;
-import com.mai.pilot_assistent.controller.dto.SignUpRequest;
+import com.mai.pilot_assistent.controller.dto.*;
+import com.mai.pilot_assistent.controller.dto.converters.ConvertUtils;
 import com.mai.pilot_assistent.model.Role;
 import com.mai.pilot_assistent.model.User;
 import com.mai.pilot_assistent.repository.UserRepository;
@@ -16,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,6 +26,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.Collections;
+import java.util.Optional;
 
 
 @RestController
@@ -49,17 +49,24 @@ public class AuthController {
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getUsernameOrEmail(),
-                        loginRequest.getPassword()
-                )
-        );
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getUsernameOrEmail(),
+                            loginRequest.getPassword()
+                    )
+            );
+            Optional<User> user  = userRepository.findByUsernameOrEmail(loginRequest.getUsernameOrEmail(),loginRequest.getUsernameOrEmail()) ;
+            String jwt = tokenProvider.generateToken(authentication);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            return ResponseEntity.ok(new JwtAuthenticationResponse(jwt, ConvertUtils.toUserProfile(user.get())));
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String jwt = tokenProvider.generateToken(authentication);
-        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
+        } catch (AuthenticationException ex) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    ErrorDTO.builder()
+                            .errorText("Ошибка авторизации! Неправильный логин или пароль")
+                            .build());
+        }
     }
 
     @PostMapping("/signup")
