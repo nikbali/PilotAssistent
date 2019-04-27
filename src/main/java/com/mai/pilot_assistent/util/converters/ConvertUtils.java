@@ -11,14 +11,17 @@ import java.util.logging.SimpleFormatter;
 final public class ConvertUtils {
 
     public static UserProfile toUserProfile(User user) {
-        return UserProfile.builder()
-                .id(user.getId())
+        UserProfile.UserProfileBuilder builder = UserProfile.builder();
+        if (user.getBirth() != null) {
+            builder.birth(toStringDate(user.getBirth()));
+        }
+        builder.id(user.getId())
                 .name(user.getName())
                 .username(user.getUsername())
                 .email(user.getEmail())
-                .gender(user.getGender())
-                .birth(toStringDate(user.getBirth()))
-                .build();
+                .gender(user.getGender());
+        return builder.build();
+
     }
 
     public static Date toDate(String dateJson) {
