@@ -2,6 +2,8 @@ package com.mai.pilot_assistent.controller;
 
 
 import com.mai.pilot_assistent.controller.dto.*;
+import com.mai.pilot_assistent.controller.dto.base.ErrorResponse;
+import com.mai.pilot_assistent.controller.dto.base.SuccessResponse;
 import com.mai.pilot_assistent.model.Role;
 import com.mai.pilot_assistent.model.User;
 import com.mai.pilot_assistent.repository.UserRepository;
@@ -59,7 +61,7 @@ public class AuthController {
 
         } catch (AuthenticationException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-                    ErrorDTO.builder()
+                    ErrorResponse.builder()
                             .errorText("Ошибка авторизации! Неправильный логин или пароль")
                             .build());
         }
@@ -68,12 +70,12 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-            return new ResponseEntity<>(new ApiResponse(false, "Пользователь с таким никнеймом уже существует!"),
+            return new ResponseEntity<>(new ErrorResponse("Пользователь с таким никнеймом уже существует!"),
                     HttpStatus.BAD_REQUEST);
         }
 
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return new ResponseEntity<>(new ApiResponse(false, "Пользователь с таким email адресом уже существует!"),
+            return new ResponseEntity<>(new ErrorResponse("Пользователь с таким email адресом уже существует!"),
                     HttpStatus.BAD_REQUEST);
         }
 
@@ -92,9 +94,9 @@ public class AuthController {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             user.setAuthorities(Collections.singleton(Role.USER));
             userRepository.save(user);
-            return ResponseEntity.ok(new ApiResponse(true, "Пользователь успешно зарегистрирован"));
+            return ResponseEntity.ok(new SuccessResponse(true, "Пользователь успешно зарегистрирован"));
         } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(true, ex.getMessage()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(ex.getMessage()));
         }
     }
 }

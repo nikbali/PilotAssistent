@@ -1,7 +1,7 @@
 package com.mai.pilot_assistent.controller;
 
 
-import com.mai.pilot_assistent.controller.dto.ErrorDTO;
+import com.mai.pilot_assistent.controller.dto.base.ErrorResponse;
 import com.mai.pilot_assistent.controller.dto.UserProfile;
 import com.mai.pilot_assistent.service.UserService;
 import com.mai.pilot_assistent.util.converters.ConvertUtils;
@@ -42,7 +42,7 @@ public class UserController {
                                 .build()),
 
                         (failure) -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                .body(ErrorDTO.builder()
+                                .body(ErrorResponse.builder()
                                         .errorText(failure.getMessage())
                                         .build())
                 );
