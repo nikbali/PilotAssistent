@@ -2,11 +2,11 @@ package com.mai.pilot_assistent.controller;
 
 
 import com.mai.pilot_assistent.controller.dto.*;
-import com.mai.pilot_assistent.controller.dto.converters.ConvertUtils;
 import com.mai.pilot_assistent.model.Role;
 import com.mai.pilot_assistent.model.User;
 import com.mai.pilot_assistent.repository.UserRepository;
 import com.mai.pilot_assistent.security.JwtTokenProvider;
+import com.mai.pilot_assistent.util.converters.ConvertUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,34 +21,30 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.net.URI;
 import java.util.Collections;
-import java.util.Optional;
 
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    @Autowired
-    AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider tokenProvider;
 
     @Autowired
-    UserRepository userRepository;
-
-
-    @Autowired
-    PasswordEncoder passwordEncoder;
-
-    @Autowired
-    JwtTokenProvider tokenProvider;
+    public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository, PasswordEncoder passwordEncoder, JwtTokenProvider tokenProvider) {
+        this.authenticationManager = authenticationManager;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.tokenProvider = tokenProvider;
+    }
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -56,10 +52,10 @@ public class AuthController {
                             loginRequest.getPassword()
                     )
             );
-            Optional<User> user  = userRepository.findByUsernameOrEmail(loginRequest.getUsernameOrEmail(),loginRequest.getUsernameOrEmail()) ;
+            User user = userRepository.findByUsernameOrEmail(loginRequest.getUsernameOrEmail(), loginRequest.getUsernameOrEmail());
             String jwt = tokenProvider.generateToken(authentication);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            return ResponseEntity.ok(new JwtAuthenticationResponse(jwt, ConvertUtils.toUserProfile(user.get())));
+            return ResponseEntity.ok(new JwtAuthenticationResponse(jwt, ConvertUtils.toUserProfile(user)));
 
         } catch (AuthenticationException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
@@ -72,32 +68,33 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-            return new ResponseEntity<>(new ApiResponse(false, "Username is already taken!"),
+            return new ResponseEntity<>(new ApiResponse(false, "Пользователь с таким никнеймом уже существует!"),
                     HttpStatus.BAD_REQUEST);
         }
 
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return new ResponseEntity<>(new ApiResponse(false, "Email Address already in use!"),
+            return new ResponseEntity<>(new ApiResponse(false, "Пользователь с таким email адресом уже существует!"),
                     HttpStatus.BAD_REQUEST);
         }
 
-        User user = User.builder()
+        try {
+
+            User user = User.builder()
                 .id(ObjectId.get().toString())
                 .name(signUpRequest.getName())
                 .username(signUpRequest.getUsername())
                 .email(signUpRequest.getEmail())
                 .password(signUpRequest.getPassword())
+                .gender(signUpRequest.getGender())
+                .birth(ConvertUtils.toDate(signUpRequest.getBirth()))
                 .build();
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setAuthorities(Collections.singleton(Role.USER));
-
-        User result = userRepository.save(user);
-
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentContextPath().path("/users/{username}")
-                .buildAndExpand(result.getUsername()).toUri();
-
-        return ResponseEntity.created(location).body(new ApiResponse(true, "User registered successfully"));
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setAuthorities(Collections.singleton(Role.USER));
+            userRepository.save(user);
+            return ResponseEntity.ok(new ApiResponse(true, "Пользователь успешно зарегистрирован"));
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(true, ex.getMessage()));
+        }
     }
 }
