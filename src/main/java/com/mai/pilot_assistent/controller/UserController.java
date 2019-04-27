@@ -1,13 +1,15 @@
 package com.mai.pilot_assistent.controller;
 
 
+import com.mai.pilot_assistent.controller.dto.ErrorDTO;
 import com.mai.pilot_assistent.controller.dto.UserProfile;
-import com.mai.pilot_assistent.model.User;
-import com.mai.pilot_assistent.repository.UserRepository;
-import exception.ResourceNotFoundException;
+import com.mai.pilot_assistent.service.UserService;
+import com.mai.pilot_assistent.util.converters.ConvertUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,19 +19,32 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class UserController {
 
-    @Autowired
-    private UserRepository userRepository;
-
-
+    private final UserService userService;
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-
-    @GetMapping("/users/{username}")
-    public UserProfile getUserProfile(@PathVariable(value = "username") String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
-        return new UserProfile(user.getId(), user.getUsername(), user.getName());
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
 
+    @GetMapping("/users/{username}")
+    public ResponseEntity<?> getUser(@PathVariable(value = "username") String username) {
+        return userService.findByUsername(username)
+                .fold(
+                        (user) -> ResponseEntity.ok(UserProfile.builder()
+                                .id(user.getId())
+                                .username(user.getUsername())
+                                .name(user.getName())
+                                .email(user.getEmail())
+                                .gender(user.getGender())
+                                .birth(ConvertUtils.toStringDate(user.getBirth()))
+                                .build()),
+
+                        (failure) -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                .body(ErrorDTO.builder()
+                                        .errorText(failure.getMessage())
+                                        .build())
+                );
+    }
 }

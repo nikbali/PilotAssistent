@@ -1,20 +1,24 @@
 package com.mai.pilot_assistent.service;
 
-import com.mai.pilot_assistent.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.*;
-import org.springframework.stereotype.Service;
+import com.mai.pilot_assistent.util.Result;
+import com.mai.pilot_assistent.model.User;
 
+import java.util.List;
 
-@Service
-public class UserService implements UserDetailsService {
+/**
+ * Сервис для работы с пользователями, используется в контроллерах
+ */
+public interface UserService {
 
-    @Autowired
-    UserRepository userRepository;
+    Result<User> findByEmail(String email);
 
+    Result<User> findByUsernameOrEmail(String username, String email);
 
-    @Override
-    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        return null;
-    }
+    Result<List<User>> findByIdIn(List<String> userIds);
+
+    Result<User> findByUsername(String username);
+
+    Result<User> createUser(User user);
+
+    Result<User> updateUser(User user);
 }
