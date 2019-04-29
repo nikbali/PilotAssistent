@@ -37,9 +37,9 @@ public class Aircraft {
     private Double wingspan;
 
     /**
-     * Фото
+     * URL изображения
      */
-    private String photo;
+    private String imageUrl;
 
     /**
      * Высота
@@ -49,15 +49,15 @@ public class Aircraft {
     /**
      * Крейсерская скорость
      */
-    private Double cruising_speed;
+    private Double cruisingSpeed;
 
     /**
      * Максимальная скорость
      */
-    private Double max_speed;
+    private Double maxSpeed;
 
     /**
      * Мощность двигателя (л.с)
      */
-    private Double engine_power;
+    private Double enginePower;
 }

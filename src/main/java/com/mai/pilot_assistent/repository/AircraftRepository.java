@@ -5,15 +5,16 @@ import com.mai.pilot_assistent.model.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface AircraftRepository extends MongoRepository<Aircraft, String> {
 
     /**
-     * Поиск самолета по наименованию
-     * @param aircraftName
-     * @return самолет, либо null в Optional
+     * Поиск самолетов по наименованию
+     * @param aircraftName название
+     * @return список найденных самолетов, либо пустой список
      */
-    Optional<Aircraft> findByName(String aircraftName);
+    List<Aircraft> findByName(String aircraftName);
 }
