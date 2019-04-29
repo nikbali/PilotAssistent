@@ -2,8 +2,8 @@ package com.mai.pilot_assistent.controller;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
-import com.mai.pilot_assistent.controller.dto.ApiResponse;
-import com.mai.pilot_assistent.controller.dto.ErrorDTO;
+import com.mai.pilot_assistent.controller.dto.base.ErrorResponse;
+import com.mai.pilot_assistent.controller.dto.base.SuccessResponse;
 import org.cloudinary.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -50,10 +50,10 @@ public class ImageController {
             JSONObject json = new JSONObject(response);
             String url = json.getString("url");
             return ResponseEntity
-                    .ok(ApiResponse.builder().message(url).build());
+                    .ok(SuccessResponse.builder().message(url).build());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ErrorDTO.builder().errorText(e.getMessage()).build());
+                    .body(ErrorResponse.builder().errorText(e.getMessage()).build());
         }
     }
 }
