@@ -4,7 +4,6 @@ spring:
   data:
     mongodb:
       uri: ${MONGODB_URI}
-      #uri: mongodb://localhost:27018/pilot
       grid-fs-database: images
   servlet:
     multipart:
