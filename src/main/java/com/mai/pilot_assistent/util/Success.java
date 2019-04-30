@@ -19,4 +19,9 @@ public class Success<T> implements Result<T> {
     public <N> Result<N> map(Function<T, N> mapper) {
         return new Success<>(mapper.apply(value));
     }
+
+    @Override
+    public T getValue() {
+        return value;
+    }
 }

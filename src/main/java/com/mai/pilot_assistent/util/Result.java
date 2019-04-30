@@ -11,6 +11,8 @@ public interface Result<T> {
         return new Success<>(value);
     }
 
+    T getValue();
+
     static <T> Result<T> fail(Exception e, String message) {
         return new Failure<>(e, message);
     }

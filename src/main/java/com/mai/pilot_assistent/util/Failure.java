@@ -21,6 +21,11 @@ public class Failure<T> implements Result<T> {
         return new Failure<>(null,"");
     }
 
+    @Override
+    public T getValue() {
+        throw new RuntimeException(exception);
+    }
+
     public Exception getException() {
         return exception;
     }
