@@ -10,11 +10,30 @@ import java.util.List;
  */
 public interface UserService {
 
+    /**
+     * Ищет пользователя по email
+     * @param email email
+     */
     Result<User> findByEmail(String email);
 
-    Result<User> findByUsernameOrEmail(String username, String email);
+    /**
+     * Ищет пользователя сначала по email, потом по username
+     * @param usernameOrEmail строка для поиска
+     */
+    Result<User> findByUsernameOrEmail(String usernameOrEmail);
 
-    Result<List<User>> findByIdIn(List<String> userIds);
+    /**
+     * Проверяет существует ли пользователь с таким username
+     * @param username строка для поиска
+     */
+    Result<Boolean> existsByUsername(String username);
+
+    /**
+     * Проверяет существует ли пользователь с таким email
+     * @param email строка для поиска
+     */
+    Result<Boolean> existsByEmail(String email);
+
 
     Result<User> findByUsername(String username);
 

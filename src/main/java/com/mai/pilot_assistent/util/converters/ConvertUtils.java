@@ -1,6 +1,11 @@
 package com.mai.pilot_assistent.util.converters;
 
+import com.google.common.collect.Sets;
+import com.mai.pilot_assistent.controller.dto.CreateAircraftRequest;
+import com.mai.pilot_assistent.controller.dto.SignUpRequest;
 import com.mai.pilot_assistent.controller.dto.UserProfile;
+import com.mai.pilot_assistent.model.Aircraft;
+import com.mai.pilot_assistent.model.Role;
 import com.mai.pilot_assistent.model.User;
 
 import java.text.ParseException;
@@ -28,9 +33,33 @@ final public class ConvertUtils {
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             return formatter.parse(dateJson);
-        }catch(ParseException ex){
+        } catch (ParseException ex) {
             throw new RuntimeException(String.format("Невалидный формат даты: %s", dateJson));
         }
+    }
+
+    public static User fromSignUpRequestToUser(SignUpRequest signUpRequest) {
+        return User.builder()
+                .authorities(Sets.immutableEnumSet(Role.USER))
+                .birth(toDate(signUpRequest.getBirth()))
+                .email(signUpRequest.getEmail())
+                .gender(signUpRequest.getGender())
+                .username(signUpRequest.getUsername())
+                .name(signUpRequest.getName())
+                .password(signUpRequest.getPassword())
+                .build();
+    }
+
+    public static Aircraft fromCreateAircraftRequestToAircraft(CreateAircraftRequest createAircraftRequest) {
+        return Aircraft.builder()
+                .name(createAircraftRequest.getName())
+                .year(createAircraftRequest.getYear())
+                .height(createAircraftRequest.getHeight())
+                .cruisingSpeed(createAircraftRequest.getCruisingSpeed())
+                .enginePower(createAircraftRequest.getEnginePower())
+                .length(createAircraftRequest.getLength())
+                .maxSpeed(createAircraftRequest.getMaxSpeed())
+                .build();
     }
 
     public static String toStringDate(Date date) {
