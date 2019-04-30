@@ -44,7 +44,7 @@ public class ImageController {
                 (success) -> ResponseEntity.ok(SuccessResponse.builder()
                         .message(success).build()),
                 (failure) -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(ErrorResponse.builder().errorText(failure.getMessage()).build())
+                        .body(new ErrorResponse(failure.getMessage()).getErrorText())
         );
     }
 }

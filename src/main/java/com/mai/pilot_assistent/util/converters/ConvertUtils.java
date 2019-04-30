@@ -1,8 +1,10 @@
 package com.mai.pilot_assistent.util.converters;
 
 import com.google.common.collect.Sets;
+import com.mai.pilot_assistent.controller.dto.CreateAircraftRequest;
 import com.mai.pilot_assistent.controller.dto.SignUpRequest;
 import com.mai.pilot_assistent.controller.dto.UserProfile;
+import com.mai.pilot_assistent.model.Aircraft;
 import com.mai.pilot_assistent.model.Role;
 import com.mai.pilot_assistent.model.User;
 
@@ -45,6 +47,18 @@ final public class ConvertUtils {
                 .username(signUpRequest.getUsername())
                 .name(signUpRequest.getName())
                 .password(signUpRequest.getPassword())
+                .build();
+    }
+
+    public static Aircraft fromCreateAircraftRequestToAircraft(CreateAircraftRequest createAircraftRequest) {
+        return Aircraft.builder()
+                .name(createAircraftRequest.getName())
+                .year(createAircraftRequest.getYear())
+                .height(createAircraftRequest.getHeight())
+                .cruisingSpeed(createAircraftRequest.getCruisingSpeed())
+                .enginePower(createAircraftRequest.getEnginePower())
+                .length(createAircraftRequest.getLength())
+                .maxSpeed(createAircraftRequest.getMaxSpeed())
                 .build();
     }
 

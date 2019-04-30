@@ -1,11 +1,14 @@
 package com.mai.pilot_assistent.service.impl;
 
+import com.google.common.base.Preconditions;
 import com.mai.pilot_assistent.model.Aircraft;
 import com.mai.pilot_assistent.repository.AircraftRepository;
 import com.mai.pilot_assistent.service.AircraftService;
+import com.mai.pilot_assistent.service.ImageCloudService;
 import com.mai.pilot_assistent.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -13,10 +16,12 @@ import java.util.List;
 public class AircraftServiceImpl implements AircraftService {
 
     private final AircraftRepository aircraftRepository;
+    private final ImageCloudService imageCloudService;
 
     @Autowired
-    public AircraftServiceImpl(AircraftRepository aircraftRepository) {
+    public AircraftServiceImpl(AircraftRepository aircraftRepository, ImageCloudService imageCloudService) {
         this.aircraftRepository = aircraftRepository;
+        this.imageCloudService = imageCloudService;
     }
 
     /**
@@ -39,10 +44,18 @@ public class AircraftServiceImpl implements AircraftService {
      * {@inheritDoc}
      */
     @Override
-    public Result<Aircraft> createAircraft(Aircraft aircraft) {
-        return null;
+    public Result<Aircraft> createAircraft(MultipartFile image, Aircraft aircraft) {
+        return Result.retrieve(
+                () -> {
+                    Preconditions.checkArgument(aircraft != null);
+                    if (image != null) {
+                        String urlImage = imageCloudService.upload(image).getValue();
+                        aircraft.setImageUrl(urlImage);
+                    }
+                    return aircraftRepository.save(aircraft);
+                }
+        );
     }
-
     /**
      * {@inheritDoc}
      */

@@ -3,6 +3,7 @@ package com.mai.pilot_assistent.service;
 import com.mai.pilot_assistent.model.Aircraft;
 import com.mai.pilot_assistent.util.Failure;
 import com.mai.pilot_assistent.util.Result;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -27,8 +28,9 @@ public interface AircraftService {
     /**
      * Метод создает новый самолет. Если в процессе создания произошла ошибка, возвращает {@link Failure} с инф-ей.
      * @param aircraft самолет
+     * @param image изображение
      */
-    Result<Aircraft> createAircraft(Aircraft aircraft);
+    Result<Aircraft> createAircraft(MultipartFile image, Aircraft aircraft);
 
     /**
      * Метод обновляет существующий самолет. Если в процессе обновления произошла ошибка, возвращает {@link Failure} с инф-ей.
