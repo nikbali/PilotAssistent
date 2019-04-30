@@ -43,7 +43,7 @@ public class ImageController {
         return imageCloudService.upload(file).fold(
                 (success) -> ResponseEntity.ok(SuccessResponse.builder()
                         .message(success).build()),
-                failure -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                (failure) -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                         .body(ErrorResponse.builder().errorText(failure.getMessage()).build())
         );
     }

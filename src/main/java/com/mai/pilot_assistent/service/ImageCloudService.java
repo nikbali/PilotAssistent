@@ -12,7 +12,7 @@ public interface ImageCloudService {
 
     /**
      * Метод загружает файл в облако
-     * @param file
+     * @param file файл
      * @return возвращает url на загруженный файл
      */
     Result<String> upload(MultipartFile file);

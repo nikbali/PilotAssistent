@@ -22,8 +22,7 @@ public class ImageCloudServiceImpl implements ImageCloudService {
      * API key для использования Cloudinary, неоходимо установить системную переменную CLOUDINARY_URL
      * {@see https://cloudinary.com/documentation/upload_images}
      */
-    final
-    String mCloudUrl;
+    private final String mCloudUrl;
 
     @Autowired
     public ImageCloudServiceImpl(@Qualifier("cloudinary.url") String mCloudUrl) {
