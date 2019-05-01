@@ -55,10 +55,10 @@ public class AuthServiceImpl implements AuthService {
             Preconditions.checkArgument(!user.getEmail().isEmpty(), "Поле Email должно быть заполнено!");
             Preconditions.checkArgument(!user.getName().isEmpty(), "Имя должно быть заполнено!");
             Preconditions.checkArgument(!user.getPassword().isEmpty(), "Пароль должен быть заполнен!");
-            if (!userService.existsByUsername(user.getUsername()).getValue()) {
+            if (userService.existsByUsername(user.getUsername()).getValue()) {
                 throw new RuntimeException("Пользователь с таким username уже существует!");
             }
-            if (!userService.existsByEmail(user.getEmail()).getValue()) {
+            if (userService.existsByEmail(user.getEmail()).getValue()) {
                 throw new RuntimeException("Пользователь с таким email`ом уже существует!");
             }
             user.setPassword(passwordEncoder.encode(user.getPassword()));
