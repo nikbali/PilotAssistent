@@ -22,8 +22,8 @@ public class AircraftController {
         this.aircraftService = aircraftService;
     }
 
-    @PostMapping(value = "/create", produces = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> createAircraft(@RequestParam("image") MultipartFile file, @RequestBody CreateAircraftRequest request){
+    @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<?> createAircraft(@RequestPart("image") MultipartFile file, @RequestPart("aircraft") CreateAircraftRequest request){
        return aircraftService.createAircraft(file, ConvertUtils.fromCreateAircraftRequestToAircraft(request))
                 .fold(
                         ResponseEntity::ok,
@@ -32,6 +32,19 @@ public class AircraftController {
                                                 .body(ErrorResponse.builder()
                                                                     .errorText(fail.getMessage())
                                                                     .build())
+                );
+    }
+
+    @PostMapping(value = "/create_special", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<?> createAircraft(@RequestPart("aircraft") CreateAircraftRequest request){
+        return aircraftService.createAircraft(request.getImage(), ConvertUtils.fromCreateAircraftRequestToAircraft(request))
+                .fold(
+                        ResponseEntity::ok,
+
+                        (fail) ->ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                .body(ErrorResponse.builder()
+                                        .errorText(fail.getMessage())
+                                        .build())
                 );
     }
 

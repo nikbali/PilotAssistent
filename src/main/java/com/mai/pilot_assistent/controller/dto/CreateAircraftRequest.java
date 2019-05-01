@@ -3,6 +3,7 @@ package com.mai.pilot_assistent.controller.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @Builder
@@ -16,4 +17,5 @@ public class CreateAircraftRequest {
     private Double cruisingSpeed;
     private Double maxSpeed;
     private Double enginePower;
+    private MultipartFile image;
 }
