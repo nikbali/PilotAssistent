@@ -48,5 +48,16 @@ public class AircraftController {
                 );
     }
 
+    @GetMapping(value = "/get_all", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<?> getAll(){
+        return aircraftService.findAll()
+                .fold(
+                        ResponseEntity::ok,
+
+                        (fail) ->ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                .body(ErrorResponse.builder().errorText(fail.getMessage()).build())
+                );
+    }
+
 
 }

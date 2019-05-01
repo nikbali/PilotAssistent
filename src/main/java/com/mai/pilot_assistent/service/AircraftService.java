@@ -19,6 +19,11 @@ public interface AircraftService {
     Result<Aircraft> findById(String aircraftId);
 
     /**
+     * Метод возвращает список всех самолетов из БД
+     */
+    Result<List<Aircraft>> findAll();
+
+    /**
      * Метод позвращает список самолетов по наименованию. Если ничего не найдено, возвращает {@link Failure}
      * @param name Id самолета в mongo
      */

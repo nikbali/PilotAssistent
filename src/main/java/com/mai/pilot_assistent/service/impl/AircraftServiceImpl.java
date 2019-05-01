@@ -32,6 +32,11 @@ public class AircraftServiceImpl implements AircraftService {
         return null;
     }
 
+    @Override
+    public Result<List<Aircraft>> findAll() {
+        return Result.retrieve(aircraftRepository::findAll);
+    }
+
     /**
      * {@inheritDoc}
      */
