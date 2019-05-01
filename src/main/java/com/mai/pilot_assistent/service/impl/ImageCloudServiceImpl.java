@@ -40,7 +40,7 @@ public class ImageCloudServiceImpl implements ImageCloudService {
             Cloudinary cloudinary = new Cloudinary(mCloudUrl);
             Map response = cloudinary.uploader().upload(createFile, ObjectUtils.emptyMap());
             JSONObject json = new JSONObject(response);
-            return Result.success(json.getString("url"));
+            return Result.success(json.getString("secure_url"));
         } catch (IOException ex) {
             return Result.fail(ex, "Произошла ошибка при сохранении файла!");
         }
