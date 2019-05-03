@@ -42,6 +42,7 @@ public class FlightServiceImpl implements FlightService {
             Flight flight = Flight.builder()
                     .aircraft(aircraft)
                     .pilot(user)
+                    .flightNumber(request.getFlightNumber())
                     .destination(request.getDestination())
                     .origin(request.getOrigin())
                     .departureDateTime(request.getDepartureDateTime())

@@ -14,5 +14,6 @@ public class CreateFlightRequest {
     private String destination;
     private LocalDateTime departureDateTime;
     private LocalDateTime arrivalDateTime;
+    private String flightNumber;
     private String aircraftId;
 }

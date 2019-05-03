@@ -19,6 +19,7 @@ public class CreateFlightResponse {
     private String id;
     private String origin;
     private String destination;
+    private String flightNumber;
     private LocalDateTime departureDateTime;
     private LocalDateTime arrivalDateTime;
     private Aircraft aircraft;
@@ -33,6 +34,7 @@ public class CreateFlightResponse {
                 .departureDateTime(flight.getDepartureDateTime())
                 .arrivalDateTime(flight.getArrivalDateTime())
                 .aircraft(flight.getAircraft())
+                .flightNumber(flight.getFlightNumber())
                 .status(flight.getStatus())
                 .pilot(UserProfile.builder()
                         .id(flight.getPilot().getId())

@@ -59,6 +59,11 @@ public class Flight {
     private Aircraft aircraft;
 
     /**
+     * Номер рейса
+     */
+    private String flightNumber;
+
+    /**
      * Пилот
      */
     private User pilot;
