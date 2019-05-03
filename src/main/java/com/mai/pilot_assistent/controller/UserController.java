@@ -1,10 +1,11 @@
 package com.mai.pilot_assistent.controller;
 
 
-import com.mai.pilot_assistent.controller.dto.base.ErrorResponse;
 import com.mai.pilot_assistent.controller.dto.UserProfile;
+import com.mai.pilot_assistent.controller.dto.base.ErrorResponse;
+import com.mai.pilot_assistent.security.CurrentUser;
+import com.mai.pilot_assistent.security.UserPrincipal;
 import com.mai.pilot_assistent.service.UserService;
-import com.mai.pilot_assistent.util.converters.ConvertUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,14 +33,20 @@ public class UserController {
     public ResponseEntity<?> getUser(@PathVariable(value = "username") String username) {
         return userService.findByUsername(username)
                 .fold(
-                        (user) -> ResponseEntity.ok(UserProfile.builder()
-                                .id(user.getId())
-                                .username(user.getUsername())
-                                .name(user.getName())
-                                .email(user.getEmail())
-                                .gender(user.getGender())
-                                .birth(ConvertUtils.toStringDate(user.getBirth()))
-                                .build()),
+                        (user) -> ResponseEntity.ok(UserProfile.fromUser(user)),
+
+                        (failure) -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                .body(ErrorResponse.builder()
+                                        .errorText(failure.getMessage())
+                                        .build())
+                );
+    }
+
+    @GetMapping("/user/me")
+    public ResponseEntity<?> getCurrentUser(@CurrentUser UserPrincipal currentUser) {
+        return userService.findByUsername(currentUser.getUsername())
+                .fold(
+                        (user) -> ResponseEntity.ok(UserProfile.fromUser(user)),
 
                         (failure) -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                 .body(ErrorResponse.builder()

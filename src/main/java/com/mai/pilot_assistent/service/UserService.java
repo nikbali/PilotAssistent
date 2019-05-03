@@ -40,4 +40,6 @@ public interface UserService {
     Result<User> createUser(User user);
 
     Result<User> updateUser(User user);
+
+    Result<User> getCurrentUser();
 }

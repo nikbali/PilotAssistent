@@ -29,7 +29,12 @@ public class AircraftServiceImpl implements AircraftService {
      */
     @Override
     public Result<Aircraft> findById(String aircraftId) {
-        return null;
+        return Result.retrieve(
+                () -> {
+                    Preconditions.checkArgument(aircraftId != null);
+                    return aircraftRepository.findById(aircraftId)
+                            .orElseThrow(() -> new RuntimeException(String.format("Самолет с Id: %s не найден", aircraftId)));
+                });
     }
 
     @Override
