@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 public class CreateFlightRequest {
-    private String origin;
-    private String destination;
+    private String originId;
+    private String destinationId;
     private LocalDateTime departureDateTime;
     private LocalDateTime arrivalDateTime;
     private String flightNumber;

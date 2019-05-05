@@ -1,9 +1,6 @@
 package com.mai.pilot_assistent.controller.dto;
 
-import com.mai.pilot_assistent.model.Aircraft;
-import com.mai.pilot_assistent.model.Flight;
-import com.mai.pilot_assistent.model.FlightStatus;
-import com.mai.pilot_assistent.model.User;
+import com.mai.pilot_assistent.model.*;
 import com.mai.pilot_assistent.util.converters.ConvertUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,8 +14,8 @@ import java.time.LocalDateTime;
 public class CreateFlightResponse {
 
     private String id;
-    private String origin;
-    private String destination;
+    private Airport origin;
+    private Airport destination;
     private String flightNumber;
     private LocalDateTime departureDateTime;
     private LocalDateTime arrivalDateTime;

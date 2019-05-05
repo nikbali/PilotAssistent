@@ -10,6 +10,8 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 public class CreateAircraftRequest {
     private String name;
+    private String registrationName;
+    private String baseAirportId;
     private Integer year;
     private Double length;
     private Double wingspan;

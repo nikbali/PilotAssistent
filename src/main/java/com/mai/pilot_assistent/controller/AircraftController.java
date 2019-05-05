@@ -1,10 +1,10 @@
 package com.mai.pilot_assistent.controller;
 
-import com.mai.pilot_assistent.controller.dto.CreateAircraftRequest;
 import com.mai.pilot_assistent.controller.dto.base.ErrorResponse;
 import com.mai.pilot_assistent.model.Aircraft;
+import com.mai.pilot_assistent.model.Airport;
+import com.mai.pilot_assistent.repository.AirportRepository;
 import com.mai.pilot_assistent.service.AircraftService;
-import com.mai.pilot_assistent.util.converters.ConvertUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,16 +17,20 @@ import org.springframework.web.multipart.MultipartFile;
 public class AircraftController {
 
     private final AircraftService aircraftService;
+    private final AirportRepository airportRepository;
 
     @Autowired
-    public AircraftController( AircraftService aircraftService) {
+    public AircraftController(AircraftService aircraftService, AirportRepository airportRepository) {
         this.aircraftService = aircraftService;
+        this.airportRepository = airportRepository;
     }
 
     //TODO лютый костыль, нужно поменять на адвекватный json-body, но пока нет времени
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<?> createAircraft(@RequestPart(value = "image", required = false) MultipartFile file,
-                                            @RequestPart(value = "name", required = true) String name,
+                                            @RequestPart(value = "name") String name,
+                                            @RequestPart(value = "registrationName") String registrationName,
+                                            @RequestPart(value = "airportId", required = false) String airportId,
                                             @RequestPart(value ="year", required = false) String year,
                                             @RequestPart(value ="length", required = false) String length,
                                             @RequestPart(value ="wingspan", required = false) String wingspan,
@@ -35,8 +39,14 @@ public class AircraftController {
                                             @RequestPart(value ="maxSpeed", required = false) String maxSpeed,
                                             @RequestPart(value ="enginePower", required = false) String enginePower){
         try {
+            Airport airport = null;
+            if(airportId != null){
+                airport = airportRepository.findById(airportId).orElseThrow(() -> new IllegalArgumentException("Указан некорректный аэропорт"));
+            }
             Aircraft aircraft = Aircraft.builder()
                     .name(name)
+                    .registrationName(registrationName)
+                    .baseAirport(airport)
                     .year(year != null ? Integer.parseInt(year) : null)
                     .length(length != null ? Double.parseDouble(length) : null)
                     .height(height != null ? Double.parseDouble(height) : null)
@@ -58,6 +68,11 @@ public class AircraftController {
             return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
                     .body(ErrorResponse.builder()
                             .errorText("Некорректный тип данных в одном из параметров")
+                            .build());
+        }catch (IllegalArgumentException ex){
+            return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
+                    .body(ErrorResponse.builder()
+                            .errorText(ex.getMessage())
                             .build());
         }
 
