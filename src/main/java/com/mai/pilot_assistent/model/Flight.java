@@ -21,12 +21,12 @@ public class Flight {
     /**
      * Пункт отправления
      */
-    private String origin;
+    private Airport origin;
 
     /**
      * Пункт назначения
      */
-    private String destination;
+    private Airport destination;
 
     /**
      * Время вылета(плановое)

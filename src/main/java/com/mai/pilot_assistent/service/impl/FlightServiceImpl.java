@@ -1,10 +1,8 @@
 package com.mai.pilot_assistent.service.impl;
 
 import com.mai.pilot_assistent.controller.dto.CreateFlightRequest;
-import com.mai.pilot_assistent.model.Aircraft;
-import com.mai.pilot_assistent.model.Flight;
-import com.mai.pilot_assistent.model.FlightStatus;
-import com.mai.pilot_assistent.model.User;
+import com.mai.pilot_assistent.model.*;
+import com.mai.pilot_assistent.repository.AirportRepository;
 import com.mai.pilot_assistent.repository.FlightRepository;
 import com.mai.pilot_assistent.security.CurrentUser;
 import com.mai.pilot_assistent.security.UserPrincipal;
@@ -18,15 +16,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class FlightServiceImpl implements FlightService {
 
-    final private FlightRepository flightRepository;
+    private final FlightRepository flightRepository;
     private final UserService userService;
     private final AircraftService aircraftService;
+    private final AirportRepository airportRepository;
+
 
     @Autowired
-    public FlightServiceImpl(FlightRepository flightRepository, UserService userService, AircraftService aircraftService) {
+    public FlightServiceImpl(FlightRepository flightRepository, UserService userService, AircraftService aircraftService, AirportRepository airportRepository) {
         this.flightRepository = flightRepository;
         this.userService = userService;
         this.aircraftService = aircraftService;
+        this.airportRepository = airportRepository;
     }
 
     @Override
@@ -39,12 +40,14 @@ public class FlightServiceImpl implements FlightService {
         return Result.retrieve(() -> {
             User user = userService.findByUsername(username).getValue();
             Aircraft aircraft = aircraftService.findById(request.getAircraftId()).getValue();
+            Airport origin = airportRepository.findById(request.getOriginId()).orElseThrow(() -> new IllegalArgumentException("Указан некорректный пункт отправления"));
+            Airport destination = airportRepository.findById(request.getDestinationId()).orElseThrow(() -> new IllegalArgumentException("Указан некорректный пункт назначения"));
             Flight flight = Flight.builder()
                     .aircraft(aircraft)
                     .pilot(user)
                     .flightNumber(request.getFlightNumber())
-                    .destination(request.getDestination())
-                    .origin(request.getOrigin())
+                    .destination(destination)
+                    .origin(origin)
                     .departureDateTime(request.getDepartureDateTime())
                     .arrivalDateTime(request.getArrivalDateTime())
                     .status(FlightStatus.SCHEDULED)

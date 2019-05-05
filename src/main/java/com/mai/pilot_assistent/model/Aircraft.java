@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
  * Entity - class Самолет
@@ -11,6 +13,7 @@ import org.springframework.data.annotation.Id;
 @Data
 @Builder
 @AllArgsConstructor
+@Document(collection="aircraft")
 public class Aircraft {
 
     @Id
@@ -20,6 +23,17 @@ public class Aircraft {
      * Полное название
      */
     private String name;
+
+    /**
+     * Регистрационный номер или бортовой номер
+     */
+    @Indexed(unique=true)
+    private String registrationName;
+
+    /**
+     * Базовый аэродром
+     */
+    private Airport baseAirport;
 
     /**
      * Год производства
