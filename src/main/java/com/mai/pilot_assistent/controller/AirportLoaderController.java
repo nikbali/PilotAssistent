@@ -47,4 +47,18 @@ public class AirportLoaderController {
 
 
     }
+
+    @PostMapping("/getAll")
+    public ResponseEntity<?> getAll() {
+        try {
+            return ResponseEntity.ok(airportRepository.findAll());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.METHOD_FAILURE)
+                    .body(ErrorResponse.builder()
+                            .errorText(e.getMessage())
+                            .build());
+        }
+
+
+    }
 }
