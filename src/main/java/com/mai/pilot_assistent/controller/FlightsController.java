@@ -28,7 +28,7 @@ public class FlightsController {
         this.flightService = flightService;
     }
 
-    @PostMapping("/flights/create")
+    @PostMapping("/flight/create")
     public ResponseEntity<?> createFlight(@CurrentUser UserPrincipal currentUser, @Valid @RequestBody CreateFlightRequest flightRequest) {
         return flightService.createFlight(currentUser, flightRequest)
                 .fold(
@@ -41,4 +41,6 @@ public class FlightsController {
                 );
 
     }
+
+    //TODO написать метод getAll
 }
