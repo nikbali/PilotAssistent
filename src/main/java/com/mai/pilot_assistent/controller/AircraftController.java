@@ -4,7 +4,10 @@ import com.mai.pilot_assistent.controller.dto.base.ErrorResponse;
 import com.mai.pilot_assistent.model.Aircraft;
 import com.mai.pilot_assistent.model.Airport;
 import com.mai.pilot_assistent.repository.AirportRepository;
+import com.mai.pilot_assistent.security.JwtTokenProvider;
 import com.mai.pilot_assistent.service.AircraftService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,6 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/aircraft")
 public class AircraftController {
+
+    private static final Logger logger = LoggerFactory.getLogger(AircraftController.class);
 
     private final AircraftService aircraftService;
     private final AirportRepository airportRepository;
@@ -59,10 +64,14 @@ public class AircraftController {
                     .fold(
                             ResponseEntity::ok,
 
-                            (fail) ->ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                    .body(ErrorResponse.builder()
-                                            .errorText(fail.getMessage())
-                                            .build())
+                            (fail) ->{
+                                logger.error(fail.getMessage());
+                                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                        .body(ErrorResponse.builder()
+                                                .errorText(fail.getMessage())
+                                                .build());
+
+                            }
                     );
         }catch (NumberFormatException ex){
             return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
